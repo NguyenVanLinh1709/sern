@@ -22,6 +22,7 @@ const initWebRoutes = (app) => {
   router.post("/register", hashPassword, userController.handleRegister);
   router.delete("/:id", userController.handleDelete);
   router.post("/login", userController.handleLogin);
+  router.get("/users", userController.handleGetUsers);
 
   router.get("/private", (req, res, next) => {
     try {

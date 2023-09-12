@@ -21,6 +21,11 @@ const userService = {
     await db.User.destroy({ where: { id: id } });
   },
 
+  getUsers: async () => {
+    const users = await db.User.findAll();
+    return users;
+  },
+
   handleRegister: (firstName, lastName, email, password) => {
     return new Promise(async (resolve, reject) => {
       try {

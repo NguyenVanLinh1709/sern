@@ -8,6 +8,21 @@ function handleLogin() {
 </script>
 
 <template>
-  <div>Hello Kieu</div>
-  <button @click="handleLogin">Login</button>
+  <div class="welcome-container">
+    <div class="title">Welcome to My first Vue Project</div>
+    <v-btn @click="handleLogin">Login</v-btn>
+  </div>
 </template>
+
+<style>
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  .title {
+    color: rgb(0, 160, 112);
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+}
+</style>
