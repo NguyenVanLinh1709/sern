@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  database:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=linhdev
+      - MYSQL_ROOT_PASSWORD=null
+    ports:
+      - "3309:3306"

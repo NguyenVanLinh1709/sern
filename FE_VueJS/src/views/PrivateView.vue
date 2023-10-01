@@ -5,10 +5,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const users = ref<User[]>([])
 const dialog = ref(false)
+const userId = ref(null)
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 const password = ref('')
+const successAlert = ref(false)
+const confirmDelete = ref(false)
+const deleteSuccessAlert = ref(false)
 
 interface User {
   id: number
@@ -57,9 +61,38 @@ const handleSubmit = () => {
       password: password.value
     })
   })
-    .then((res) => {
+    .then(() => {
       dialog.value = false
       getUsers()
+      successAlert.value = true
+      setTimeout(() => {
+        successAlert.value = false
+      }, 5000)
+    })
+    .catch((err) => {
+      console.log('error', err)
+    })
+}
+
+const showConfirmDelete = (user: any) => {
+  confirmDelete.value = true
+  userId.value = user.id
+  firstName.value = user.firstName
+  lastName.value = user.lastName
+  email.value = user.email
+}
+
+const handleDelete = () => {
+  fetch(`http://localhost:3308/user/${userId.value}`, {
+    method: 'DELETE'
+  })
+    .then(() => {
+      confirmDelete.value = false
+      getUsers()
+      deleteSuccessAlert.value = true
+      setTimeout(() => {
+        deleteSuccessAlert.value = false
+      }, 5000)
     })
     .catch((err) => {
       console.log('error', err)
@@ -68,6 +101,26 @@ const handleSubmit = () => {
 </script>
 
 <template>
+  <v-alert
+    style="margin-bottom: 20px"
+    v-model="successAlert"
+    type="success"
+    closable
+    title="Successfully"
+  >
+    Create user successfully
+  </v-alert>
+
+  <v-alert
+    style="margin-bottom: 20px"
+    v-model="deleteSuccessAlert"
+    type="success"
+    closable
+    title="Successfully"
+  >
+    Delete user successfully
+  </v-alert>
+
   <v-dialog v-model="dialog" width="400px">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props"> Create </v-btn>
@@ -89,6 +142,25 @@ const handleSubmit = () => {
     </v-card>
   </v-dialog>
 
+  <v-dialog v-model="confirmDelete" width="400px">
+    <v-card>
+      <v-card-title>
+        <span class="text-h5">Confirm delete</span>
+      </v-card-title>
+      <v-card-text>
+        <b>Are you sure you want to delete this one?</b>
+        <div>First name: {{ firstName }}</div>
+        <div>Last name: {{ lastName }}</div>
+        <div>Email: {{ email }}</div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="tonal" @click="confirmDelete = false">Close</v-btn>
+        <v-btn variant="tonal" @click="handleDelete">Delete</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-table style="margin: 20px 0">
     <thead>
       <tr>
@@ -104,8 +176,10 @@ const handleSubmit = () => {
         <td>{{ user.lastName }}</td>
         <td>{{ user.email }}</td>
         <td>
-          <span style="margin-right: 16px; cursor: pointer">Edit</span
-          ><span style="cursor: pointer">Delete</span>
+          <span style="margin-right: 16px; cursor: pointer; color: orange">Edit</span>
+          <span style="cursor: pointer; color: red" @click="() => showConfirmDelete(user)"
+            >Delete</span
+          >
         </td>
       </tr>
     </tbody>
