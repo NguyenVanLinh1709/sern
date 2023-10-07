@@ -47,6 +47,18 @@ const userControllers = {
     const userData = await userService.getUsers();
     return res.status(200).json(userData);
   },
+
+  handleEditUsers: async (req, res) => {
+    const userId = req.query.id;
+    const dataUpdate = req.body;
+    const isExitUserId = await userService.checkIdExist(userId);
+    if (isExitUserId) {
+      userService.getUserById(userId, dataUpdate);
+      return res.send("Found");
+    } else {
+      return res.send("User not found");
+    }
+  },
 };
 
 export default userControllers;

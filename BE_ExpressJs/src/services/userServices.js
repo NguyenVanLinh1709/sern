@@ -74,6 +74,29 @@ const userService = {
       }
     });
   },
+
+  getUserById: (userId, dataUpdate) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await db.User.findOne({
+          where: { id: userId },
+          raw: false,
+        });
+        if (user) {
+          user.firstName = dataUpdate.firstName;
+          user.lastName = dataUpdate.lastName;
+          user.email = dataUpdate.lastName;
+          user.password = dataUpdate.password;
+          await user.save();
+          resolve();
+        } else {
+          resolve([]);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 };
 
 export default userService;

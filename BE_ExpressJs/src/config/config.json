@@ -1,11 +1,11 @@
 {
   "development": {
     "username": "root",
-    "password": "null",
+    "password": null,
     "database": "linhdev",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": "33060",
+    "port": "3307",
     "logging": false,
     "query": {
       "raw": true
