@@ -13,6 +13,7 @@ const password = ref('')
 const successAlert = ref(false)
 const confirmDelete = ref(false)
 const deleteSuccessAlert = ref(false)
+const isEdit = ref(false)
 
 interface User {
   id: number
@@ -49,33 +50,77 @@ const handleLogout = () => {
 }
 
 const handleSubmit = () => {
-  fetch('http://localhost:3308/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      firstName: firstName.value,
-      lastName: lastName.value,
-      email: email.value,
-      password: password.value
+  if (isEdit.value) {
+    fetch(`http://localhost:3308/user?id=${userId.value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        password: password.value
+      })
     })
-  })
-    .then(() => {
-      dialog.value = false
-      getUsers()
-      successAlert.value = true
-      setTimeout(() => {
-        successAlert.value = false
-      }, 5000)
+      .then(() => {
+        dialog.value = false
+        getUsers()
+        successAlert.value = true
+        isEdit.value = false
+        setTimeout(() => {
+          successAlert.value = false
+        }, 5000)
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
+  } else {
+    fetch('http://localhost:3308/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        password: password.value
+      })
     })
-    .catch((err) => {
-      console.log('error', err)
-    })
+      .then(() => {
+        dialog.value = false
+        getUsers()
+        successAlert.value = true
+        setTimeout(() => {
+          successAlert.value = false
+        }, 5000)
+      })
+      .catch((err) => {
+        console.log('error', err)
+      })
+  }
+}
+
+const onCloseDialog = () => {
+  firstName.value = ''
+  lastName.value = ''
+  email.value = ''
+  password.value = ''
+  dialog.value = false
 }
 
 const showConfirmDelete = (user: any) => {
   confirmDelete.value = true
+  userId.value = user.id
+  firstName.value = user.firstName
+  lastName.value = user.lastName
+  email.value = user.email
+}
+
+const showEditUser = (user: any) => {
+  isEdit.value = true
+  dialog.value = true
   userId.value = user.id
   firstName.value = user.firstName
   lastName.value = user.lastName
@@ -137,7 +182,7 @@ const handleDelete = () => {
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn block @click="dialog = false">Close Dialog</v-btn>
+        <v-btn block @click="() => onCloseDialog()">Close Dialog</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -176,7 +221,11 @@ const handleDelete = () => {
         <td>{{ user.lastName }}</td>
         <td>{{ user.email }}</td>
         <td>
-          <span style="margin-right: 16px; cursor: pointer; color: orange">Edit</span>
+          <span
+            style="margin-right: 16px; cursor: pointer; color: orange"
+            @click="() => showEditUser(user)"
+            >Edit</span
+          >
           <span style="cursor: pointer; color: red" @click="() => showConfirmDelete(user)"
             >Delete</span
           >
