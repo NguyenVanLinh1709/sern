@@ -85,7 +85,7 @@ const userService = {
         if (user) {
           user.firstName = dataUpdate.firstName;
           user.lastName = dataUpdate.lastName;
-          user.email = dataUpdate.lastName;
+          user.email = dataUpdate.email;
           user.password = dataUpdate.password;
           await user.save();
           resolve();
@@ -96,6 +96,13 @@ const userService = {
         reject(error);
       }
     });
+  },
+
+  getAllCodes: async (type) => {
+    const allCodes = await db.Allcodes.findAll({
+      where: { type: type },
+    });
+    return allCodes;
   },
 };
 

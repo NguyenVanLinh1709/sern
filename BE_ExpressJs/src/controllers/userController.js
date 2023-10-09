@@ -59,6 +59,12 @@ const userControllers = {
       return res.send("User not found");
     }
   },
+
+  handleGetAllCodes: async (req, res) => {
+    console.log("req", req.query.type);
+    const allCodes = await userService.getAllCodes(req.query.type);
+    return res.status(200).json(allCodes);
+  },
 };
 
 export default userControllers;

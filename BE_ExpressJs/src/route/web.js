@@ -25,6 +25,8 @@ const initWebRoutes = (app) => {
   router.get("/users", userController.handleGetUsers);
   router.put("/user", hashPassword, userController.handleEditUsers);
 
+  router.get("/allcodes", userController.handleGetAllCodes);
+
   router.get("/private", (req, res, next) => {
     try {
       const token = req.headers.authentication;
